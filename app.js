@@ -38,8 +38,6 @@ myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
                 $scope.authData = authData;
                 console.log("Authenticated successfully with payload:", authData);
                 console.log($scope.authData);
-                $scope.email = "";
-                $scope.password = "";
                 window.location.href = 'index.html';
             });
 
@@ -106,7 +104,8 @@ myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window",
             console.log($scope.authData);
             array.$add({
                 person: $scope.authData.uid,
-                text: $scope.message
+                text: $scope.message,
+                timestamp: Firebase.ServerValue.TIMESTAMP
             });
 
             $scope.message = "";
@@ -114,7 +113,6 @@ myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window",
         }
 
         $scope.logout = function () {
-
             ref.unauth();
             window.location.href = ('login.html');
         }
