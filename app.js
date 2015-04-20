@@ -65,8 +65,8 @@ myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
 
             }]);
 
-myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window",
-        function ($scope, $firebaseArray, Auth, $window) {
+myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject",
+        function ($scope, $firebaseArray, Auth, $window, $firebaseObject) {
 
         var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
 
@@ -83,12 +83,23 @@ myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window",
             }
         });
 
-        //console.log(array.$ref() == ref);
+        var custom = [];
+
+        var obj = $firebaseObject(ref);
+
+        obj.$loaded().then(function () {
+
+            angular.forEach(obj, function (value) {
+                custom.push({
+                    "name": value.person,
+                    "oppinion": value.text
+                });
+                console.log(value);
+            });
+            $scope.customMessages = custom;
+        });
 
         $scope.messages = array;
-
-
-        console.log($scope.authData);
 
         $scope.post_message = function () {
 
