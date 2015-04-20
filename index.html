@@ -755,17 +755,16 @@
 
 
                                         <li class="typing">
-                                            <span class="name">{{ authData.uid }}</span>is typing
+                                            <span> {{ authData.uid }} </span> is typing
                                             <img src="img/loading.gif" alt="">
                                         </li>
                                         <li class="insert">
                                             <form id="message-form" method="POST" action="#">
                                                 <div class="text">
-                                                    <input type="text" name="text" placeholder="Write here..." class="form-control">
+                                                    <input type="text" ng-model="message" name="text" placeholder="Write here..." class="form-control">
                                                 </div>
                                                 <div class="submit">
-                                                    <button type="submit">
-                                                        <i class="fa fa-share"></i>
+                                                    <button ng-click="post_message()">Send message
                                                     </button>
                                                 </div>
                                             </form>
