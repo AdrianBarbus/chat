@@ -1,3 +1,27 @@
+'use strict';
+
+
+angular
+    .module('myApp', [
+    'firebase'
+  ])
+    .config(function ($routeProvider) {
+        $routeProvider
+            .when('/index', {
+                templateUrl: 'index.html',
+                controller: 'MyController'
+            })
+            .when('/', {
+                templateUrl: 'login.html',
+                controller: 'LoginCtrl'
+            })
+            .otherwise({
+                redirectTo: '/'
+            });
+    });
+
+
+
 var myApp = angular.module("myApp", ["firebase"]);
 
 myApp.factory("Auth", ["$firebaseAuth",
