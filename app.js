@@ -92,6 +92,28 @@ myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window",
 
         var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
 
+
+}]);
+
+
+myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject",
+        function ($scope, $firebaseArray, Auth, $window, $firebaseObject) {
+
+        var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
+
+        var array = $firebaseArray(ref);
+
+        $scope.auth = Auth;
+
+        var authData = ref.getAuth();
+        if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+
+        } else {
+            console.log("User is logged out");
+            window.location.href = ('login.html');
+        }
+
         var array = $firebaseArray(ref);
 
         $scope.auth = Auth;
