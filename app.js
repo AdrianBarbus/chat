@@ -34,7 +34,7 @@ myApp.factory("Auth", ["$firebaseAuth",
 myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
   function ($scope, Auth, $window) {
 
-        $scope.createUser = function () {
+        $scope.register = function () {
 
             $scope.message = null;
             $scope.error = null;
@@ -63,6 +63,8 @@ myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
                 console.log("Authenticated successfully with payload:", authData);
                 console.log($scope.authData);
                 window.location.href = 'index.html';
+            }).catch(function (error) {
+                $scope.error = error.code;
             });
 
         }
@@ -87,23 +89,11 @@ myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
 
             }]);
 
-myApp.controller("MyController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject",
-        function ($scope, $firebaseArray, Auth, $window, $firebaseObject) {
-
-        var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
-
-
-}]);
-
 
 myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject",
         function ($scope, $firebaseArray, Auth, $window, $firebaseObject) {
 
         var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
-
-        var array = $firebaseArray(ref);
-
-        $scope.auth = Auth;
 
         var authData = ref.getAuth();
         if (authData) {
@@ -113,6 +103,10 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window
             console.log("User is logged out");
             window.location.href = ('login.html');
         }
+            
+        var array = $firebaseArray(ref);
+
+        $scope.auth = Auth;
 
         var array = $firebaseArray(ref);
 

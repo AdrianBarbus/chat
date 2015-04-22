@@ -58,15 +58,20 @@
                 </div>
 
                 <button ng-click="login()">Sign me in</button>
+
+                <br>Not registered?
+                <button ng-click="register()">Register</button>
             </form>
             <br>
+
+            <p ng-if="message">Message: <strong>{{ message }}</strong>
+            </p>
+            <p ng-if="error">Error: <strong>{{ error }}</strong>
+            </p>
+
         </div>
     </div>
 
-    <p ng-if="message">Message: <strong>{{ message }}</strong>
-    </p>
-    <p ng-if="error">Error: <strong>{{ error }}</strong>
-    </p>
 
 </body>
 
