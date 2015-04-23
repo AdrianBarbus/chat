@@ -92,7 +92,7 @@
                             </li>
                         </ul>
                     </li>
-                    
+
                     <li>
                         <a href="#" data-toggle="dropdown" class='dropdown-toggle'>
                             <span>Tables</span>
@@ -699,7 +699,7 @@
                                 </div>
                                 <div class="box-content nopadding">
                                     <ul class="messages">
-                                        <li class="left" ng-repeat="msg in messages">
+                                        <li ng-repeat="msg in messages" ng-class="{'left' : (authData.uid == msg.person),'right' : (authData.uid != msg.person)}">
                                             <div class="image">
                                                 <img src="img/demo/user-2.jpg" alt="">
                                             </div>
@@ -714,20 +714,14 @@
                                         </li>
 
 
-                                        <li class="typing">
-                                            <span> {{ authData.uid }} </span> is typing
-                                            <img src="img/loading.gif" alt="">
-                                        </li>
                                         <li class="insert">
-                                            <form id="message-form" method="POST" action="#">
-                                                <div class="text">
-                                                    <input type="text" ng-model="message" name="text" placeholder="Write here..." class="form-control">
-                                                </div>
-                                                <div class="submit">
-                                                    <button ng-click="post_message()">Send message
-                                                    </button>
-                                                </div>
-                                            </form>
+
+                                            <div class="text">
+                                                <input ng-model="message" type="text" name="text" placeholder="Write here..." class="form-control">
+                                            </div>
+
+                                            <button ng-click="post_message()">Send</button>
+
                                         </li>
                                     </ul>
                                 </div>
