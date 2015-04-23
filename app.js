@@ -13,7 +13,7 @@ var myApp = angular
             $stateProvider
                 .state('index', {
                     url: "/index",
-                    templateUrl: "index.html",
+                    templateUrl: "messages.html",
                     controller: "RootController"
                 })
                 .state('login', {
