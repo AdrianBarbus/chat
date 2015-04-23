@@ -1,28 +1,27 @@
 'use strict';
 
 
-angular
+var myApp = angular
     .module('myApp', [
-    'firebase'
+    'firebase',
+    'ui.router'
   ])
-    .config(function ($routeProvider) {
-        $routeProvider
-            .when('/index', {
-                templateUrl: 'index.html',
-                controller: 'MyController'
-            })
-            .when('/', {
-                templateUrl: 'login.html',
-                controller: 'LoginCtrl'
-            })
-            .otherwise({
-                redirectTo: '/'
-            });
-    });
+    .config(["$stateProvider", "$urlRouterProvider",
+        function ($stateProvider, $urlRouterProvider) {
 
-
-
-var myApp = angular.module("myApp", ["firebase"]);
+            $urlRouterProvider.otherwise = "/login";
+            $stateProvider
+                .state('index', {
+                    url: "/index",
+                    templateUrl: "index.html",
+                    controller: "RootController"
+                })
+                .state('login', {
+                    url: "/login",
+                    templateUrl: "login.html",
+                    controller: "LoginController"
+                });
+    }]);
 
 myApp.factory("Auth", ["$firebaseAuth",
   function ($firebaseAuth) {
@@ -31,8 +30,8 @@ myApp.factory("Auth", ["$firebaseAuth",
   }
 ]);
 
-myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
-  function ($scope, Auth, $window) {
+myApp.controller("LoginController", ["$scope", "Auth", "$window", "$state",
+  function ($scope, Auth, $window, $state) {
 
         $scope.register = function () {
 
@@ -62,7 +61,9 @@ myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
                 $scope.authData = authData;
                 console.log("Authenticated successfully with payload:", authData);
                 console.log($scope.authData);
-                window.location.href = 'index.html';
+                $scope.email = "";
+                $scope.password = "";
+                $state.go('index');
             }).catch(function (error) {
                 $scope.error = error.code;
             });
@@ -90,25 +91,30 @@ myApp.controller("LoginCtrl", ["$scope", "Auth", "$window",
             }]);
 
 
-myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject",
-        function ($scope, $firebaseArray, Auth, $window, $firebaseObject) {
+myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject", "$state",
+        function ($scope, $firebaseArray, Auth, $window, $firebaseObject, $state) {
 
         var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
 
         var authData = ref.getAuth();
+
         if (authData) {
             console.log("User " + authData.uid + " is logged in with " + authData.provider);
 
         } else {
             console.log("User is logged out");
-            window.location.href = ('login.html');
+            $state.go('login');
         }
-            
+
         var array = $firebaseArray(ref);
 
         $scope.auth = Auth;
 
         var array = $firebaseArray(ref);
+
+        angular.forEach(array, function (index) {
+            console.log(array[index] == authData.uid);
+        });
 
         $scope.auth = Auth;
         $scope.auth.$onAuth(function (authData) {
@@ -141,7 +147,6 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window
 
         $scope.post_message = function () {
 
-            console.log($scope.authData);
             array.$add({
                 person: $scope.authData.uid,
                 text: $scope.message,
@@ -154,7 +159,7 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window
 
         $scope.logout = function () {
             ref.unauth();
-            window.location.href = ('login.html');
+            $state.go('login');
         }
 
 }]);
