@@ -30,8 +30,8 @@ myApp.factory("Auth", ["$firebaseAuth",
   }
 ]);
 
-myApp.controller("LoginController", ["$scope", "Auth", "$window", "$state",
-  function ($scope, Auth, $window, $state) {
+myApp.controller("LoginController", ["$scope", "Auth", "$state",
+  function ($scope, Auth, $state) {
 
         $scope.register = function () {
 
@@ -59,8 +59,7 @@ myApp.controller("LoginController", ["$scope", "Auth", "$window", "$state",
             }).then(function (authData) {
 
                 $scope.authData = authData;
-                console.log("Authenticated successfully with payload:", authData);
-                console.log($scope.authData);
+
                 $scope.email = "";
                 $scope.password = "";
                 $state.go('index');
@@ -69,54 +68,17 @@ myApp.controller("LoginController", ["$scope", "Auth", "$window", "$state",
             });
 
         }
-
-        $scope.removeUser = function () {
-
-            $scope.message = null;
-            $scope.error = null;
-
-            Auth.$removeUser({
-                email: $scope.email,
-                password: $scope.password
-            }).then(function () {
-                $scope.message = "The user was removed.";
-            }).catch(function (error) {
-                $scope.error = error;
-            });
-
-            $scope.email = "";
-            $scope.password = "";
-        };
-
-            }]);
+}]);
 
 
-myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window", "$firebaseObject", "$state",
-        function ($scope, $firebaseArray, Auth, $window, $firebaseObject, $state) {
+myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$firebaseObject", "$state",
+        function ($scope, $firebaseArray, Auth, $firebaseObject, $state) {
 
         var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
 
         var authData = ref.getAuth();
-    
-        if (authData) {
-            console.log("User " + authData.uid + " is logged in with " + authData.provider);
-            $scope.authData = true;
-
-        } else {
-            console.log("User is logged out");
-            $scope.authData = false;
-            $state.go('login');
-        }
 
         var array = $firebaseArray(ref);
-
-        $scope.auth = Auth;
-
-        var array = $firebaseArray(ref);
-
-        angular.forEach(array, function (index) {
-            console.log(array[index] == authData.uid);
-        });
 
         $scope.auth = Auth;
         $scope.auth.$onAuth(function (authData) {
@@ -128,6 +90,8 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$window
                 console.log("Logged out");
             }
         });
+
+        $scope.date = new Date();
 
         var custom = [];
 
