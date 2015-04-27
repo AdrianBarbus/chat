@@ -78,6 +78,20 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
 
         var authData = ref.getAuth();
 
+        if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            $scope.authData = true;
+
+        } else {
+            console.log("User is logged out");
+            $scope.authData = false;
+            $state.go('login');
+        }
+
+        var array = $firebaseArray(ref);
+
+        $scope.auth = Auth;
+
         var array = $firebaseArray(ref);
 
         $scope.auth = Auth;
