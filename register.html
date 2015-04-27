@@ -4,7 +4,7 @@
 <div class="wrapper">
 
     <div class="login-body">
-        <h2>SIGN IN</h2>
+        <h2>REGISTER</h2>
         <form class='form-validate' id="test">
             <div class="form-group">
                 <div class="email controls">
@@ -17,19 +17,17 @@
                 </div>
             </div>
 
-            <button ng-click="login()">Sign me in</button>
+            <p ng-if="userWasCreatedFlag">Message: <strong>{{ message }}</strong>
+            </p>
+            <p ng-if="userWasCreatedFlag">Error: <strong>{{ error }}</strong>
+            </p>
 
-            <br>In order to login you need to be registered.
-            <button ng-click="register()">Register</button>
-
+            <button ng-click="createUser()">Register me</button>
             <br>
+            <button ng-click="backToLogin()">Back to Login page</button>
 
-            <div>
-                <p ng-if="error">Error: <strong>{{ error }}</strong>
-                </p>
-            </div>
-            <br>
         </form>
-
+        <br>
+        
     </div>
 </div>

@@ -20,8 +20,13 @@ var myApp = angular
                     url: "/login",
                     templateUrl: "login.html",
                     controller: "LoginController"
+                })
+                .state('register', {
+                    url: "/register",
+                    templateUrl: "register.html",
+                    controller: "RegisterController"
                 });
-    }]);
+}]);
 
 myApp.factory("Auth", ["$firebaseAuth",
   function ($firebaseAuth) {
@@ -30,25 +35,40 @@ myApp.factory("Auth", ["$firebaseAuth",
   }
 ]);
 
-myApp.controller("LoginController", ["$scope", "Auth", "$state",
-  function ($scope, Auth, $state) {
+myApp.controller("RegisterController", ["$scope", "Auth", "$state",
+    function ($scope, Auth, $state) {
 
-        $scope.register = function () {
+        $scope.message = "";
+        $scope.userWasCreatedFlag = false;
+        $scope.error = "";
 
-            $scope.message = null;
-            $scope.error = null;
-            $scope.flag = false;
+        $scope.createUser = function () {
 
             Auth.$createUser({
                 email: $scope.email,
                 password: $scope.password
             }).then(function (userData) {
-                $scope.message = "The user with uid: " + userData.uid + " was created successfully.";
+                $scope.message = "The user with uid: " + userData.uid + " was created successfully. To login go to Login page.";
+                $scope.userWasCreatedFlag = true;
                 $scope.email = "";
                 $scope.password = "";
             }).catch(function (error) {
                 $scope.error = error;
             });
+        }
+
+        $scope.backToLogin = function () {
+
+            $state.go('login');
+        }
+}]);
+
+myApp.controller("LoginController", ["$scope", "Auth", "$state",
+  function ($scope, Auth, $state) {
+
+        $scope.register = function () {
+
+            $state.go('register');
         };
 
         $scope.login = function () {
