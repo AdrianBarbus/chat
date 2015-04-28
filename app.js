@@ -45,7 +45,7 @@ myApp.controller("RegisterController", ["$scope", "Auth", "$state", "$firebaseAr
         $scope.createUser = function () {
             $scope.userWasCreatedFlag = false;
             $scope.errorFlag = false;
-            
+
             Auth.$createUser({
                 email: $scope.email,
                 password: $scope.password
@@ -100,14 +100,14 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         var messagesRef = new Firebase("https://sweltering-fire-9533.firebaseio.com/messages");
         var authData = firebaseRef.getAuth();
 
-        //        if (authData) {
-        //            console.log("User " + authData.uid + " is logged in with " + authData.provider);
-        //            $scope.authData = true;
-        //        } else {
-        //            console.log("User is logged out");
-        //            $scope.authData = false;
-        //            $state.go('login');
-        //        }
+        if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            $scope.authData = true;
+        } else {
+            console.log("User is logged out");
+            $scope.authData = false;
+            $state.go('login');
+        }
 
         $scope.auth = Auth;
         var array = $firebaseArray(messagesRef);
@@ -116,10 +116,7 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         $scope.auth.$onAuth(function (authData) {
 
             if (authData) {
-                console.log("Logged in as:", authData.uid);
                 $scope.authData = authData;
-            } else {
-                console.log("Logged out");
             }
         });
 
