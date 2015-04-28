@@ -19,7 +19,7 @@
 
             <p ng-if="userWasCreatedFlag">Message: <strong>{{ message }}</strong>
             </p>
-            <p ng-if="userWasCreatedFlag">Error: <strong>{{ error }}</strong>
+            <p ng-if="errorFlag">Error: <strong>{{ error.message }}</strong>
             </p>
 
             <button ng-click="createUser()">Register me</button>

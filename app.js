@@ -8,7 +8,6 @@ var myApp = angular
   ])
     .config(["$stateProvider", "$urlRouterProvider",
         function ($stateProvider, $urlRouterProvider) {
-
             $urlRouterProvider.otherwise = "/login";
             $stateProvider
                 .state('index', {
@@ -35,84 +34,83 @@ myApp.factory("Auth", ["$firebaseAuth",
   }
 ]);
 
-myApp.controller("RegisterController", ["$scope", "Auth", "$state",
-    function ($scope, Auth, $state) {
-
+myApp.controller("RegisterController", ["$scope", "Auth", "$state", "$firebaseArray",
+    function ($scope, Auth, $state, $firebaseArray) {
+        var profilesRef = new Firebase("https://sweltering-fire-9533.firebaseio.com/profiles");
         $scope.message = "";
         $scope.userWasCreatedFlag = false;
+        $scope.errorFlag = false;
         $scope.error = "";
 
         $scope.createUser = function () {
-
+            $scope.userWasCreatedFlag = false;
+            $scope.errorFlag = false;
+            
             Auth.$createUser({
                 email: $scope.email,
                 password: $scope.password
             }).then(function (userData) {
-                $scope.message = "The user with uid: " + userData.uid + " was created successfully. To login go to Login page.";
-                $scope.userWasCreatedFlag = true;
+                console.log(userData);
+                var profiles = $firebaseArray(profilesRef);
+                profiles.$add({
+                    email: $scope.email,
+                    password: $scope.password,
+                    username: ""
+                });
                 $scope.email = "";
                 $scope.password = "";
+                $scope.message = "The user with uid: " + userData.uid + " was created successfully. To login go to Login page.";
+                $scope.userWasCreatedFlag = true;
             }).catch(function (error) {
                 $scope.error = error;
+                $scope.errorFlag = true;
             });
         }
 
         $scope.backToLogin = function () {
-
             $state.go('login');
         }
 }]);
 
 myApp.controller("LoginController", ["$scope", "Auth", "$state",
   function ($scope, Auth, $state) {
-
         $scope.register = function () {
-
             $state.go('register');
         };
 
         $scope.login = function () {
-
             Auth.$authWithPassword({
                 email: $scope.email,
                 password: $scope.password
             }).then(function (authData) {
-
                 $scope.authData = authData;
-
                 $scope.email = "";
                 $scope.password = "";
                 $state.go('index');
             }).catch(function (error) {
                 $scope.error = error.code;
             });
-
         }
 }]);
 
 
 myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$firebaseObject", "$state",
-        function ($scope, $firebaseArray, Auth, $firebaseObject, $state) {
+    function ($scope, $firebaseArray, Auth, $firebaseObject, $state) {
+        var firebaseRef = new Firebase("https://sweltering-fire-9533.firebaseio.com");
+        var messagesRef = new Firebase("https://sweltering-fire-9533.firebaseio.com/messages");
+        var authData = firebaseRef.getAuth();
 
-        var ref = new Firebase("https://sweltering-fire-9533.firebaseio.com/");
-
-        var authData = ref.getAuth();
-
-        if (authData) {
-            console.log("User " + authData.uid + " is logged in with " + authData.provider);
-            $scope.authData = true;
-
-        } else {
-            console.log("User is logged out");
-            $scope.authData = false;
-            $state.go('login');
-        }
-
-        var array = $firebaseArray(ref);
+        //        if (authData) {
+        //            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+        //            $scope.authData = true;
+        //        } else {
+        //            console.log("User is logged out");
+        //            $scope.authData = false;
+        //            $state.go('login');
+        //        }
 
         $scope.auth = Auth;
-
-        var array = $firebaseArray(ref);
+        var array = $firebaseArray(messagesRef);
 
         $scope.auth = Auth;
         $scope.auth.$onAuth(function (authData) {
@@ -129,7 +127,7 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
 
         var custom = [];
 
-        var obj = $firebaseObject(ref);
+        var obj = $firebaseObject(messagesRef);
 
         obj.$loaded().then(function () {
 
@@ -138,7 +136,6 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
                     "name": value.person,
                     "oppinion": value.text
                 });
-                console.log(value);
             });
             $scope.customMessages = custom;
         });
@@ -158,7 +155,7 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         }
 
         $scope.logout = function () {
-            ref.unauth();
+            firebaseRef.unauth();
             $state.go('login');
         }
 
