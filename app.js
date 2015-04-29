@@ -24,6 +24,11 @@ var myApp = angular
                     url: "/register",
                     templateUrl: "register.html",
                     controller: "RegisterController"
+                })
+                .state('profile', {
+                    url: "/profile",
+                    templateUrl: "profile.html",
+                    controller: "ProfileController"
                 });
 }]);
 
@@ -55,7 +60,7 @@ myApp.controller("RegisterController", ["$scope", "Auth", "$state", "$firebaseAr
                 profiles.$add({
                     email: $scope.email,
                     password: $scope.password,
-                    username: ""
+                    username: userData.uid
                 });
                 $scope.email = "";
                 $scope.password = "";
@@ -97,7 +102,7 @@ myApp.controller("LoginController", ["$scope", "Auth", "$state",
 myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$firebaseObject", "$state",
     function ($scope, $firebaseArray, Auth, $firebaseObject, $state) {
         var firebaseRef = new Firebase("https://sweltering-fire-9533.firebaseio.com");
-        var messagesRef = new Firebase("https://sweltering-fire-9533.firebaseio.com/messages");
+        var messagesFirebase = $firebaseArray(firebaseRef.child('messages'));
         var authData = firebaseRef.getAuth();
 
         if (authData) {
@@ -110,9 +115,7 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         }
 
         $scope.auth = Auth;
-        var array = $firebaseArray(messagesRef);
 
-        $scope.auth = Auth;
         $scope.auth.$onAuth(function (authData) {
 
             if (authData) {
@@ -121,27 +124,11 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         });
 
         $scope.date = new Date();
-
-        var custom = [];
-
-        var obj = $firebaseObject(messagesRef);
-
-        obj.$loaded().then(function () {
-
-            angular.forEach(obj, function (value) {
-                custom.push({
-                    "name": value.person,
-                    "oppinion": value.text
-                });
-            });
-            $scope.customMessages = custom;
-        });
-
-        $scope.messages = array;
+        $scope.messages = messagesFirebase;
 
         $scope.post_message = function () {
 
-            array.$add({
+            messagesFirebase.$add({
                 person: $scope.authData.uid,
                 text: $scope.message,
                 timestamp: Firebase.ServerValue.TIMESTAMP
@@ -156,4 +143,66 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
             $state.go('login');
         }
 
+        $scope.profile = function () {
+            $state.go('profile');
+        }
 }]);
+
+myApp.controller("ProfileController", ["$scope", "$firebaseArray", "Auth", "$firebaseObject", "$state",
+    function ($scope, $firebaseArray, Auth, $firebaseObject, $state) {
+
+        var firebaseRef = new Firebase("https://sweltering-fire-9533.firebaseio.com");
+        var authData = firebaseRef.getAuth();
+        console.log(authData);
+        $scope.profiles = {};
+        $scope.profiles.profile = {};
+        $scope.newPassword = "";
+        $scope.changePasswordMessage = "";
+        $scope.changePasswordFlag = false;
+        $scope.errorMessage = "";
+        $scope.errorFlag = false;
+
+        var profilesList = $firebaseObject(firebaseRef.child('profiles'));
+        console.log(profilesList);
+
+        profilesList.$loaded().then(function () {
+            angular.forEach(profilesList, function (item, index) {
+                if (authData.uid == item.username) {
+                    $scope.profiles.profile = item;
+                    console.log($scope.profiles.profile);
+                    $scope.profileIndex = index;
+                    console.log($scope.profileIndex);
+                }
+            });
+        });
+
+        $scope.changePassword = function () {
+            Auth.$changePassword({
+                email: $scope.profiles.profile.email,
+                oldPassword: $scope.profiles.profile.password,
+                newPassword: $scope.newPassword
+            }).then(function () {
+                var profileToUpdateReference = firebaseRef.child('profiles').child($scope.profileIndex);
+                console.log(profileToUpdateReference);
+
+                profileToUpdateReference.update({
+                    email: $scope.profiles.profile.email,
+                    password: $scope.newPassword,
+                    username: $scope.profiles.profile.username
+                });
+                $scope.changePasswordMessage = "The password was changed successfully.";
+                $scope.changePasswordFlag = true;
+                $scope.profiles.profile.email = "";
+                $scope.profiles.profile.username = "";
+                $scope.newPassword = "";
+            }).catch(function (error) {
+                $scope.errorMessage = error.message;
+                $scope.errorFlag = true;
+            });
+        }
+
+        $scope.messagesTab = function () {
+            $state.go('index');
+        }
+
+    }]);

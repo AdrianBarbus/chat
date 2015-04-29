@@ -269,15 +269,15 @@
             <div class="breadcrumbs">
                 <ul>
                     <li>
-                        <a href="">Home</a>
+                        <a href="more-login.html">Home</a>
                         <i class="fa fa-angle-right"></i>
                     </li>
                     <li>
-                        <a href="">Components</a>
+                        <a href="components-messages.html">Components</a>
                         <i class="fa fa-angle-right"></i>
                     </li>
                     <li>
-                        <a href="">Messages &amp; Chat</a>
+                        <a href="" ng-click="messagesTab()">Messages &amp; Chat</a>
                     </li>
                 </ul>
                 <div class="close-bread">
@@ -287,77 +287,22 @@
                 </div>
             </div>
 
-
-            <h3>Add new message</h3>
-
-            <input type="text" ng-model="message" placeholder="My thoughts from today...">
-            <button type="submit" ng-click="post_message()">Send message</button>
-
-            <h3>Messages from Firebase</h3>
-            <ul id="original-messages">
-                <li ng-repeat="msg in messages">
-                    <strong>{{ msg.person }}</strong>
-                    {{ msg.text }}
-                </li>
-            </ul>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="box">
-                        <div class="box-title">
-                            <h3>
-									<i class="fa fa-comments"></i>
-									Messages from database
-								</h3>
-                            <div class="actions">
-                                <a href="#" class="btn btn-mini content-refresh">
-                                    <i class="fa fa-refresh"></i>
-                                </a>
-                                <a href="#" class="btn btn-mini content-remove">
-                                    <i class="fa fa-times"></i>
-                                </a>
-                                <a href="#" class="btn btn-mini content-slideUp">
-                                    <i class="fa fa-angle-down"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="box-content nopadding">
-                            <ul class="messages">
-                                <li ng-repeat="msg in messages" ng-class="{'left' : (authData.uid == msg.person),'right' : (authData.uid != msg.person)}">
-
-                                    <div class="image">
-                                        <img src="img/demo/user-2.jpg" alt="">
-                                    </div>
-
-                                    <div class="message">
-                                        <span class="caret"></span>
-                                        <span class="name">{{ msg.person }}</span>
-                                        <p>{{ msg.text }}</p>
-                                        <span class="time">
-												{{ msg.timestamp | date : "short" }}
-											</span>
-                                    </div>
-                                </li>
-
-                                <li class="insert">
-
-                                    <div class="text">
-                                        <input ng-model="message" type="text" name="text" placeholder="Write here..." class="form-control">
-                                    </div>
-
-                                    <button ng-click="post_message()">Send</button>
-
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <h3>Profile</h3>
+            <h4>Email: </h4>
+            <input type="text" ng-model="profiles.profile.email" readonly/>
+            <br>
+            <h4>Username: </h4>
+            <input type="text" ng-model="profiles.profile.username" readonly/>
+            <h4>New password: </h4>
+            <input type="password" ng-model="newPassword" />
+            <br>
+            <div ng-show="changePasswordFlag">
+                <h5>{{changePasswordMessage}}</h5>
             </div>
+            <div ng-show="errorFlag">
+                <h5>{{errorMessage}}</h5>
+            </div>
+            <button ng-click="changePassword()">Change the password</button>
         </div>
     </div>
 </div>
-
-
-
-<!-- Theme scripts -->
-<script src="js/application.min.js"></script>
