@@ -106,11 +106,7 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         var authData = firebaseRef.getAuth();
         var raiseHandReference = firebaseRef.child('raiseHand');
         $scope.handRaiser = $firebaseObject(raiseHandReference);
-        //        $scope.personWhoRaisedHand = handRaiser.username;
-        //        $scope.showHandFlag = handRaiser.value;
-        //        console.log($scope.personWhoRaisedHand);
-        //        console.log($scope.showHandFlag);
-        console.log($scope.handRaiser);
+        $scope.numberOfRaiseHandClicks = 0;
 
         if (authData) {
             console.log("User " + authData.uid + " is logged in with " + authData.provider);
@@ -151,26 +147,20 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         }
 
         $scope.raiseHand = function () {
-
-            var showHand = function () {
-                console.log($scope.handRaiser);
-                //                $scope.personWhoRaisedHand = handRaiser.username;
-                console.log($scope.handRaiser.username);
-                //                $scope.showHandFlag = handRaiser.value;
-                console.log($scope.handRaiser.value);
-            };
-
+            console.log($scope.numberOfRaiseHandClicks);
+            ++$scope.numberOfRaiseHandClicks;
             raiseHandReference.update({
                 value: true,
                 username: authData.uid
-            }, showHand);
+            });
 
             $timeout(function () {
                 raiseHandReference.update({
                     value: false,
                     username: authData.uid
-                }, showHand);
+                });
             }, 10000);
+            console.log($scope.numberOfRaiseHandClicks);
         }
 }]);
 

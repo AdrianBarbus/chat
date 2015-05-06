@@ -345,12 +345,12 @@
                                         <input ng-model="message" type="text" name="text" placeholder="Write here..." class="form-control">
                                     </div>
 
-                                    <button ng-click="post_message()">Send</button>
+                                    <button ng-disabled="!(authData.uid == handRaiser.username) && handRaiser.value " ng-click="post_message()">Send</button>
 
                                 </li>
                             </ul>
 
-                            <button ng-click="raiseHand()">Raise hand</button>
+                            <button ng-disabled="numberOfRaiseHandClicks >=3" ng-click="raiseHand()">Raise hand</button>
 
                         </div>
 
