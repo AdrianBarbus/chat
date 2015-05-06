@@ -349,6 +349,14 @@
 
                                 </li>
                             </ul>
+
+                            <button ng-click="raiseHand()">Raise hand</button>
+
+                        </div>
+
+                        <div class="col-lg-3 col-lg-offset-4" ng-show="handRaiser.value">
+                            <span ng-bind="handRaiser.username"></span>
+                            <img height="100" width="100" src="img/raiseHand.jpg" alt="">
                         </div>
                     </div>
                 </div>

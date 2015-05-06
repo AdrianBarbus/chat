@@ -99,11 +99,18 @@ myApp.controller("LoginController", ["$scope", "Auth", "$state",
 }]);
 
 
-myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$firebaseObject", "$state",
-    function ($scope, $firebaseArray, Auth, $firebaseObject, $state) {
+myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$firebaseObject", "$state", "$timeout",
+    function ($scope, $firebaseArray, Auth, $firebaseObject, $state, $timeout) {
         var firebaseRef = new Firebase("https://sweltering-fire-9533.firebaseio.com");
         var messagesFirebase = $firebaseArray(firebaseRef.child('messages'));
         var authData = firebaseRef.getAuth();
+        var raiseHandReference = firebaseRef.child('raiseHand');
+        $scope.handRaiser = $firebaseObject(raiseHandReference);
+        //        $scope.personWhoRaisedHand = handRaiser.username;
+        //        $scope.showHandFlag = handRaiser.value;
+        //        console.log($scope.personWhoRaisedHand);
+        //        console.log($scope.showHandFlag);
+        console.log($scope.handRaiser);
 
         if (authData) {
             console.log("User " + authData.uid + " is logged in with " + authData.provider);
@@ -117,7 +124,6 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         $scope.auth = Auth;
 
         $scope.auth.$onAuth(function (authData) {
-
             if (authData) {
                 $scope.authData = authData;
             }
@@ -127,15 +133,12 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
         $scope.messages = messagesFirebase;
 
         $scope.post_message = function () {
-
             messagesFirebase.$add({
                 person: $scope.authData.uid,
                 text: $scope.message,
                 timestamp: Firebase.ServerValue.TIMESTAMP
             });
-
             $scope.message = "";
-
         }
 
         $scope.logout = function () {
@@ -145,6 +148,29 @@ myApp.controller("RootController", ["$scope", "$firebaseArray", "Auth", "$fireba
 
         $scope.profile = function () {
             $state.go('profile');
+        }
+
+        $scope.raiseHand = function () {
+
+            var showHand = function () {
+                console.log($scope.handRaiser);
+                //                $scope.personWhoRaisedHand = handRaiser.username;
+                console.log($scope.handRaiser.username);
+                //                $scope.showHandFlag = handRaiser.value;
+                console.log($scope.handRaiser.value);
+            };
+
+            raiseHandReference.update({
+                value: true,
+                username: authData.uid
+            }, showHand);
+
+            $timeout(function () {
+                raiseHandReference.update({
+                    value: false,
+                    username: authData.uid
+                }, showHand);
+            }, 10000);
         }
 }]);
 
