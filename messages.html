@@ -288,19 +288,6 @@
             </div>
 
 
-            <h3>Add new message</h3>
-
-            <input type="text" ng-model="message" placeholder="My thoughts from today...">
-            <button type="submit" ng-click="post_message()">Send message</button>
-
-            <h3>Messages from Firebase</h3>
-            <ul id="original-messages">
-                <li ng-repeat="msg in messages">
-                    <strong>{{ msg.person }}</strong>
-                    {{ msg.text }}
-                </li>
-            </ul>
-
             <div class="row">
                 <div class="col-sm-12">
                     <div class="box">
